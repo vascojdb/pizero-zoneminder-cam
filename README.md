@@ -148,9 +148,9 @@ static domain_name_servers=192.168.0.1 8.8.8.8
 4. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 
 ### Disable Raspberry Pi Zero W onboard WiFi
-**For Raspberry Pi Zero W only:**
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pizerow_nowifi.png "Disabling WiFi on Rpi Zero W")
 
+**For Raspberry Pi Zero W only:**
 Due to the issues above *(see FAQ section)*, you will **need to disable** the onboard WiFi module and use the USB WiFi dongle instead, to do this follow these steps:
 1. Open the boot configuration file by typing `sudo nano /boot/config.txt`
 2. Add the following lines to the end of the file:
