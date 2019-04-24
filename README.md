@@ -107,12 +107,14 @@ For this setup you will need:
 Follow these instructions to install the system on your Raspberry Pi Zero:
 ### Micro SD preparation
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/sdcards.png "SD cards")
+
 Let's start by poreparing the micro SD card with the latest Raspbian Lite image:
 1. Download the latest **Raspbian Stretch Lite** *(no desktop)* from [the official site](https://www.raspberrypi.org/downloads/)
 2. Use a tool like **Win32 Disk Imager** ([download here](https://sourceforge.net/projects/win32diskimager/)) or similar to burn the image into your micro SD
 
 ### First boot
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/raspiconfig.png "Raspberry pi configuration")
+
 Let's configure the basics with these steps:
 1. Put the micro SD on your Raspberry Pi Zero, plug also the USB hub, keyboard and screen
 2. Skip this step if you are using a Raspberry Pi Zero W: Add your WiFi USB dongle *(if you are using the Raspberry Pi Zero **without** WiFi)*, 
@@ -131,6 +133,7 @@ Let's configure the basics with these steps:
 
 ### Assigning a static IP *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/static_ip.png "Using static IP")
+
 If you want to assign a static IP instead of using your network DHCP server, follow the next steps *(tested on Rasbian Stretch Lite)*:
 1. Type `sudo nano /etc/dhcpcd.conf`
 2. Navigate on the file and make sure the following is set *(use your own IP and gateway address)*:
@@ -147,6 +150,7 @@ static domain_name_servers=192.168.0.1 8.8.8.8
 ### Disable Raspberry Pi Zero W onboard WiFi
 **For Raspberry Pi Zero W only:**
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pizerow_nowifi.png "Disabling WiFi on Rpi Zero W")
+
 Due to the issues above *(see FAQ section)*, you will **need to disable** the onboard WiFi module and use the USB WiFi dongle instead, to do this follow these steps:
 1. Open the boot configuration file by typing `sudo nano /boot/config.txt`
 2. Add the following lines to the end of the file:
@@ -161,6 +165,7 @@ dtoverlay=pi3-disable-wifi
 
 ### Permanently disable SWAP to extend your SD card life *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/noswap.png "Disabling SWAP")
+
 In order to extend your SD card life, you may disable the SWAP so it wont use your card as an extension of RAM, follow these steps to disable the SWAP:
 1. `sudo swapoff`
 2. `sudo dphys-swapfile swapoff`
@@ -171,6 +176,7 @@ In order to extend your SD card life, you may disable the SWAP so it wont use yo
 
 ### Install phpSysInfo *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/phpsysinfo.png "The phpSysInfo webpage")
+
 To install the phpSysInfo you will need to install Apache webserver and the PHP dependencies, follow these steps to install Apache, PHP and phpSysInfo:
 Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did not run them yet.
 **Apache:**
@@ -203,6 +209,7 @@ Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did n
 
 ### Install SSDP Responder *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/image_ssdp_camera.png "The device with SSDP responder service")
+
 If you want your Raspberry Pi Zero to show up as a camera device on your Windows Network, then follow these steps:
 1. Make sure you have GIT and WGET installed by typing `sudo apt-get install git wget`
 2. Get the latest version from the official page [here](https://github.com/troglobit/ssdp-responder/releases) or directly  [here (v1.5)](https://github.com/troglobit/ssdp-responder/releases/download/v1.5/ssdp-responder-1.5.tar.gz)
@@ -222,10 +229,12 @@ If you want your Raspberry Pi Zero to show up as a camera device on your Windows
 
 ### Install PiZero-ZoneMinder-Cam:
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pi_camera.png "PiZero-ZoneMinder-Cam")
+
 1. **TODO**
 
 ### Make your SD card read only to extend its life and allow instant power off *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/oldsd.png "Extend SD life")
+
 If you want to extend your micro SD card life even further as well as allow instant power off without the possibility of corrupting your data, you should follow these steps:
 1. **TODO**
 
