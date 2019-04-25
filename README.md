@@ -9,11 +9,20 @@
 * [3 - Cost breakdown](#cost)
 * [4 - Requirements](#requirements)
 * [5 - Installation](#installation)
+  * [5.1 - Micro SD preparation](#installation-prepare)
+  * [5.2 - First boot](#installation-firstboot)
+  * [5.3 - Assigning a static IP](#installation-staticip) *(optional)*
+  * [5.4 - Disable Raspberry Pi Zero W onboard WiFi](#installation-disablewifi)
+  * [5.5 - Permanently disable SWAP to extend your SD card life](#installation-disableswap) *(optional)*
+  * [5.6 - Install phpSysInfo](#installation-physysinfo) *(optional)*
+  * [5.7 - Install SSDP Responder](#installation-ssdpresponder) *(optional)*
+  * [5.8 - Install PiZero-ZoneMinder-Cam](#installation-main)
+  * [5.9 - Make your SD card Read-Only to extend its life and allow instant power off](#installation-readonly) *(optional)*
 * [6 - Donate](#donate)
 
 ****
 
-## **1 - What is the PiZero-ZoneMinder-Cam?** {#whatis}
+## **1 - What is the PiZero-ZoneMinder-Cam?** <a name="whatis"></a>
 It is a very **low cost** camera built from a Raspberry Pi Zero, a Raspberry Pi camera and a cheap USB-WiFi module.
 
 This setup is meant to be connected to a **ZoneMinder** server on your network, where you can add and configure your cameras (recording, movement detection, etc) as you please.
@@ -22,7 +31,7 @@ I abandoned some ready to use software/builds available online because of how he
 
 ****
 
-## **2 - Q&A before you start** {#qa}
+## **2 - Q&A before you start** <a name="qa"></a>
 ### Why are you not using MotionEye or MotionEyeOS?
 I actually have tried these options, but I abandoned them because:
 * They were quite heavy and extremelly slow on a Raspberry Pi Zero, as most part of the tasks were CPU intensive.
@@ -75,7 +84,7 @@ For my setup the bandwidth is not really an issue as I will have separate networ
 
 ****
 
-## **3 - Cost breakdown** {#cost}
+## **3 - Cost breakdown** <a name="cost"></a>
 *NOTE: As I live in Poland, I bought some elements directly from Polish websites, so the prices will appear in PLN. Buying the Raspberry Pi Zero and the Micro SD card were cheaper to buy in Poland rather than eBay, so I didn't include eBay prices for them.*
 The prices are listed as of 19th April 2019
 
@@ -130,7 +139,7 @@ OV5647 cameras | eBay | [Link](https://www.ebay.com/)
 
 ****
 
-## **4 - Requirements** {#requirements}
+## **4 - Requirements** <a name="requirements"></a>
 
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/image_elements.PNG "What you will need")
 
@@ -146,16 +155,16 @@ For this setup you will need:
 
 ****
 
-## **5 - Installation** {#installation}
+## **5 - Installation** <a name="installation"></a>
 Follow these instructions to install the system on your Raspberry Pi Zero:
-### 5.1 - Micro SD preparation
+### 5.1 - Micro SD preparation <a name="installation-prepare"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/sdcards.png "SD cards")
 
 Let's start by poreparing the micro SD card with the latest Raspbian Lite image:
 1. Download the latest **Raspbian Stretch Lite** *(no desktop)* from [the official site](https://www.raspberrypi.org/downloads/)
 2. Use a tool like **Win32 Disk Imager** ([download here](https://sourceforge.net/projects/win32diskimager/)) or similar to burn the image into your micro SD
 
-### 5.2 - First boot
+### 5.2 - First boot <a name="installation-firstboot"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/raspiconfig.png "Raspberry pi configuration")
 
 Let's configure the basics with these steps:
@@ -174,7 +183,7 @@ Let's configure the basics with these steps:
 * `sudo rpi-update`
 6. Reboot your Raspberry Pi Zero to apply changes by typing `sudo reboot`
 
-### 5.3 - Assigning a static IP *(optional)*
+### 5.3 - Assigning a static IP *(optional)* <a name="installation-staticip"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/static_ip.png "Using static IP")
 
 If you want to assign a static IP instead of using your network DHCP server, follow the next steps *(tested on Rasbian Stretch Lite)*:
@@ -190,7 +199,7 @@ static domain_name_servers=192.168.0.1 8.8.8.8
 3. Save the file by pressing CTRL+O and then exit by pressing CTRL+X
 4. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 
-### 5.4 - Disable Raspberry Pi Zero W onboard WiFi
+### 5.4 - Disable Raspberry Pi Zero W onboard WiFi <a name="installation-disablewifi"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pizerow_nowifi.png "Disabling WiFi on Rpi Zero W")
 
 **For Raspberry Pi Zero W only:**
@@ -206,7 +215,7 @@ dtoverlay=pi3-disable-wifi
 4. Shutdown your Raspberry Pi Zero W by typing `sudo shutdown -h now`, plug in your USB WiFi dongle and power up your Pi Zero W again.
 5. After rebooting type `sudo ifconfig` and you should have one interface called `wlan0` with the IP you have assigned/been assigned *(which now is the USB WiFi module and not the onboard WiFi)*, you should also be automatically connected to your WiFi network as well.
 
-### 5.5 - Permanently disable SWAP to extend your SD card life *(optional)*
+### 5.5 - Permanently disable SWAP to extend your SD card life *(optional)* <a name="installation-disableswap"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/noswap.png "Disabling SWAP")
 
 In order to extend your SD card life, you may disable the SWAP so it wont use your card as an extension of RAM, follow these steps to disable the SWAP:
@@ -217,7 +226,7 @@ In order to extend your SD card life, you may disable the SWAP so it wont use yo
 5. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 6. After the reboot, you can confirm if the SWAP was disabled by typing `free -h`. The SWAP should now have 0B/0B/0B
 
-### 5.6 - Install phpSysInfo *(optional)*
+### 5.6 - Install phpSysInfo *(optional)* <a name="installation-physysinfo"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/phpsysinfo.png "The phpSysInfo webpage")
 
 To install the phpSysInfo you will need to install Apache webserver and the PHP dependencies, follow these steps to install Apache, PHP and phpSysInfo:
@@ -250,7 +259,7 @@ Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did n
 12. You should be able to open a browser on your PC and navigate to the IP/hostname *(example: http://192.168.0.30/)* and you will see the phpSysInfo page with all details about your Raspberry Pi Zero
 13. You may now delete the folder `phpsysinfo-3.3.0` you downloaded with git with `rm -rf /home/pi/phpsysinfo*`
 
-### 5.7 - Install SSDP Responder *(optional)*
+### 5.7 - Install SSDP Responder *(optional)* <a name="installation-ssdpresponder"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/image_ssdp_camera.png "The device with SSDP responder service")
 
 If you want your Raspberry Pi Zero to show up as a camera device on your Windows Network, then follow these steps:
@@ -270,12 +279,12 @@ If you want your Raspberry Pi Zero to show up as a camera device on your Windows
 11. To configure the SSDP responder to autostart on every boot type:
 12. **TODO**
 
-### 5.8 - Install PiZero-ZoneMinder-Cam:
+### 5.8 - Install PiZero-ZoneMinder-Cam <a name="installation-main"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pi_camera.png "PiZero-ZoneMinder-Cam")
 
 1. **TODO**
 
-### 5.9 - Make your SD card Read-Only to extend its life and allow instant power off *(optional)*
+### 5.9 - Make your SD card Read-Only to extend its life and allow instant power off *(optional)* <a name="installation-readonly"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/oldsd.png "Extend SD life")
 
 If you want to extend your micro SD card life even further as well as allow instant power off without the possibility of corrupting your data, you should follow these steps:
@@ -283,6 +292,6 @@ If you want to extend your micro SD card life even further as well as allow inst
 
 ****
 
-## **6 - Donate** {#donate}
+## **6 - Donate** <a name="donate"></a>
 If you like this project, help me make it even better by donating!
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/vascojdb)
