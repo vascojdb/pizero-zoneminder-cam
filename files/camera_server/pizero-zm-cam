@@ -2,6 +2,7 @@
 
 control_c() {
   pkill camera_server.sh
+  pkill raspivid
   echo ""
   echo "Aborted by the user. Exiting..."
   exit
@@ -14,7 +15,7 @@ do
   echo "Welcome to Raspberry Pi Camera server!"
   
   echo "Reading configuration file..."
-  source /home/pi/scripts/camera_server.conf
+  source /etc/pizero-zm-cam.conf
 
   # Adding video settings parameters:
   PARAMS="--nopreview --timeout 0 -w ${WIDTH} -h ${HEIGHT} -b ${BITRATE} -fps ${FRAMERATE} "
@@ -40,12 +41,20 @@ do
   if [ ! -z "${DRC}" ]; then PARAMS="${PARAMS} -drc ${DRC} "; fi
   if [ ! -z "${ANNOTATE}" ]; then PARAMS="${PARAMS} -a ${ANNOTATE} "; fi
 
-  # Adding additional parameters:
-  PARAMS="${PARAMS} -cd MJPEG -l -o tcp://0.0.0.0:${TCP_PORT}"
+  # Adding additional parameters depending on the encoding format:
+  H264_PARAMS=""
+  if [ "${FORMAT}" = "H264" ]
+  then
+    if [ ! -z "${H264_INTRA}" ]; then H264_PARAMS="${H264_PARAMS} -g ${H264_INTRA} "; fi
+    if [ ! -z "${H264_QUANT_PARAM}" ]; then H264_PARAMS="${H264_PARAMS} -qp ${H264_QUANT_PARAM} "; fi
+    if [ ! -z "${H264_PROFILE}" ]; then H264_PARAMS="${H264_PARAMS} -pf ${H264_PROFILE} "; fi
+    if [ ! -z "${H264_LEVEL}" ]; then H264_PARAMS="${H264_PARAMS} -lev ${H264_LEVEL} "; fi
+  fi
+  PARAMS="${PARAMS} -cd ${FORMAT} ${H264_PARAMS} -l -o tcp://0.0.0.0:${TCP_PORT}"
 
   echo "Running: raspivid ${PARAMS}"
 
-  #raspivid ${PARAMS}
+  /usr/bin/raspivid ${PARAMS}
 
   echo "Raspivid exited. Waiting 5 seconds to start again..."
   sleep 5

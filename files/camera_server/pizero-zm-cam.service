@@ -1,0 +1,13 @@
+[Unit]
+Description=PiZero ZoneMinder Cam daemon
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/pizero-zm-cam
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
