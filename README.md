@@ -187,7 +187,7 @@ Let's configure the basics with these steps:
 * Add `@reboot /sbin/iwconfig wlan0 power off` to the end of the file
 * Save the file by pressing CTRL+O and then exit by pressing CTRL+X
 7. Reboot your Raspberry Pi Zero to apply changes by typing `sudo reboot`
-8. You should now be able to connect remotely via SSH to your Raspberry Pi Zero using a computer and an SSH terminal like **PuTTY** (get it (here)[https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html]) *(**NOTE:** Use the IP you see on the Raspberry Pi screen or just the hostname you set above)*
+8. You should now be able to connect remotely via SSH to your Raspberry Pi Zero using a computer and an SSH terminal like **PuTTY** (get it [here](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)) *(**NOTE:** Use the IP you see on the Raspberry Pi Zero connected screen or just the hostname you have set above)*
 
 ### 5.3 - Assigning a static IP *(optional)* <a name="installation-staticip"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/static_ip.png "Using static IP")
