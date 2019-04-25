@@ -333,7 +333,7 @@ WantedBy=multi-user.target
 ### 5.9 - Move folders from the SD card to RAM using TMPFS *(optional)* <a name="installation-tmpfs"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/oldsd.png "Extend SD life")
 
-If you want to extend your micro SD card life even further you should move most part of the active folders (logs, tmp, etc) to the Raspberry Pi Zero RAM using **tmpfs**. To do this follow these steps:
+If you want to extend your micro SD card life even further you should move most part of the active folders *(logs, tmp, etc)* to the Raspberry Pi Zero RAM using **tmpfs**. To do this follow these steps:
 1. Edit the fstab file with `sudo nano /etc/fstab`
 2. Add the following entries to the end of the file:
 ```
@@ -353,6 +353,7 @@ Follow these steps to configure the PiZero-ZoneMinder-Cam service and ZoneMinder
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/sdcards.png "SD cards")
 
 You can edit your PiZero-ZoneMinder-Cam settings by typing on your Raspberry Pi Zero the command `sudo nano /etc/pizero-zm-cam.conf` and then saving the file by pressing CTRL+O and then exit by pressing CTRL+X
+
 Here is the default configuration found on *pizero-zm-cam.conf*:
 ```bash
 # +------------------------------+
