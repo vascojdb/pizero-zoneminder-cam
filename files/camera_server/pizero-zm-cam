@@ -18,7 +18,7 @@ do
   source /etc/pizero-zm-cam.conf
 
   # Adding video settings parameters:
-  PARAMS="--nopreview --timeout 0 -w ${WIDTH} -h ${HEIGHT} -b ${BITRATE} -fps ${FRAMERATE} "
+  PARAMS="-n -t 0 -w ${WIDTH} -h ${HEIGHT} -b ${BITRATE} -fps ${FRAMERATE} "
 
   # Adding optional image parameters:
   if [ ! -z "${SHARPNESS}" ]; then PARAMS="${PARAMS} -sh ${SHARPNESS} "; fi
