@@ -26,7 +26,13 @@
 It is a very **low cost** camera built from a Raspberry Pi Zero, a Raspberry Pi camera and a cheap USB-WiFi module.
 
 This setup is meant to be connected to a **ZoneMinder** server on your network, where you can add and configure your cameras (recording, movement detection, etc) as you please.
-The streaming format is set to **MJPEG** by default as it is a format that better fits the purpose of this project.
+
+Here are the specifications I have for the PiZero-ZoneMinder-Cam that I am currently running:
+* Encoding format: **MJPEG** *(the best format for high quality frames and advised by ZoneMidner for having many cameras in one system)*
+* Resolution: **1920x1440** at 4:3 on the sensor full FOV *(1920x1080 works fine but it does not capture the full FOV and the native 2592x1944 did not work with ZoneMinder)*
+* Frames per second: **2** *(you can add more, but for this purpose I dont think there is any sense to add more)*
+* Bitrate: **5 Mbps** *(you can change this up to about 15-17 Mbits, but you need to balance between your network bandwidth, number of cameras and bitrate per frame - MJPEG uses individual frames, so less framerate means more quality for the same bitrate)* 
+
 I abandoned some ready to use software/builds available online because of how heavy they were. I also avoided cheap IP cameras because **I do not want any of my private home cameras connected to a cloud** somewhere on the world.
 
 ****
@@ -69,6 +75,8 @@ There are several advantages and disadvantages on both streams, this table compa
 | Recover from dropped frames | Instant recover *(frames are independent)* | Next frames impacted until key frame apears |
 | Support to export video stills | Native *(individual JPEGs)* | Needs key frame and motion vector frames |
 | Supported resolution on OV5647 | Up to native *(2592x1944)* | Limited to 1920x1080 *(not confimed)*|
+| ZM decoding needed? | No | Yes *(stream is converted to individual JPEGs)* |
+| ZM number of cameras | High | Low *(due to CPU usage for the above)* |
 
 Here are some schematics trying to show the main differences between MJPEG and H.264.
 This one shows the quality and bandwith needed for each encoding method:
@@ -79,7 +87,7 @@ This one shows what happens in case of a dropped frame. On a MJPEG stream, the s
 
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/codecs2.png "MJPEG vs H.264")
 
-For this project **I decided to go with MJPEG** because I am more interested in having **sharp image quality** per frame rather than bandwidth efficiency. Also in case some frames are dropped I prefer to have the instant recovery that MJPEG offers rather than the few seconds of corrupted images from the H.264 when operating at a low framerate. I will be using a low framerate (about 2-5 fps) and ZoneMinder will take care of encoding into H.264 in order to store the footage.
+For this project **I decided to go with MJPEG** because I am more interested in having **sharp image quality** per frame rather than bandwidth efficiency. Also in case some frames are dropped I prefer to have the instant recovery that MJPEG offers rather than the few seconds of corrupted images from the H.264 when operating at a low framerate. I will be using a low framerate (about 2-5 fps) and ZoneMinder will take care of encoding into H.264 in order to store the footage. ALso according to ZM website unless you have a powerful server stick with MJPEG cameras.
 For my setup the bandwidth is not really an issue as I will have separate networks for surveilance + IOT and for general use (laptop, TV, phones, etc) so MJPEG was the choice.
 
 ****
