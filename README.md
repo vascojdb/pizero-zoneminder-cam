@@ -181,7 +181,11 @@ Let's configure the basics with these steps:
 * `sudo apt-get update`
 * `sudo apt-get upgrade -y`
 * `sudo rpi-update`
-6. Reboot your Raspberry Pi Zero to apply changes by typing `sudo reboot`
+6. Disable the WiFi power management by doing the following:
+* `sudo crontab -e` *(use nano as editor if asked)*
+* Add `@reboot /sbin/iwconfig wlan0 power off` to the end of the file
+* Save the file by pressing CTRL+O and then exit by pressing CTRL+X
+7. Reboot your Raspberry Pi Zero to apply changes by typing `sudo reboot`
 
 ### 5.3 - Assigning a static IP *(optional)* <a name="installation-staticip"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/static_ip.png "Using static IP")
@@ -250,7 +254,7 @@ Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did n
 4. Move all the extracted contents to the webserver folder by typing `sudo cp -r phpsysinfo-3.3.0/* /var/www/html/`
 5. Prepare the configuration file by typing `sudo cp /var/www/html/phpsysinfo.ini.new /var/www/html/phpsysinfo.ini.new`
 6. Edit the configuration file by typing `sudo nano /var/www/html/phpsysinfo.ini`
-7. You can use the already prepared file `phpsysinfo.ini` provided on **PiZero-ZoneMinder-Cam** under `files` folder
+7. Copy the contents from the already prepared file `phpsysinfo.ini` provided on **PiZero-ZoneMinder-Cam** under `files/phpsysinfo/` folder
 8. Save the file by pressing CTRL+O and then exit by pressing CTRL+X
 9. Open the php.ini file from the link you got from the previous step by typing `sudo nano <...>/php.ini`
 10. Find the line `include_path` and set it only to `"."`
@@ -269,15 +273,38 @@ If you want your Raspberry Pi Zero to show up as a camera device on your Windows
 4. Untar the compressed file by typing `tar -zxvf ssdp-responder-1.5.tar.gz`
 5. Go inside the directory with `cd ssdp-responder-1.5`
 6. Edit the `web.c` file by typing `nano web.c`
-7. You can use the already prepared file `web.c` provided on **PiZero-ZoneMinder-Cam** under `files` folder
+7. Copy the contents from the already prepared file `web.c` provided on **PiZero-ZoneMinder-Cam** under `files/ssdp-responder/` folder
 8. Save the file by pressing CTRL+O and then exit by pressing CTRL+X
 6. Configure the source code with `./configure`
 7. Build the application with `make`, this should take 1~2 minutes
 8. Type `sudo make install` to install the SSDP responder application
 9. You may delete the file `ssdp-responder-1.5.tar.gz` and folder `ssdp-responder-1.5` with `rm -rf /home/pi/ssdp-responder*`
 10. You can test the aplication by typing `sudo ssdpd` and checking on your Windows Network if you have a device with the same name you gave to your Raspberry Pi Zero *(for example pi-camera-01)*
-11. To configure the SSDP responder to autostart on every boot type:
-12. **TODO**
+11. To configure the SSDP responder to autostart on every boot do the following:
+* `sudo touch /etc/systemd/system/ssdpd.service`
+* `sudo nano /etc/systemd/system/ssdpd.service`
+* Add the following contents to the file:
+```
+[Unit]
+Description=SSDP responder daemon
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sleep 60
+ExecStart=/usr/local/sbin/ssdpd
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+* Save the file by pressing CTRL+O and then exit by pressing CTRL+X
+* `sudo systemctl daemon-reload`
+* `sudo systemctl enable ssdpd`
+12. Reboot your Raspberry Pi Zero by typing `sudo reboot`
+13. After the reboot, verify if the SSDP responder is running by typing `ps aux | grep ssdpd` and you should see the task(s) running
+14. You can now browse your network on your Windows PC and you will find the camera as a device, double click on it to open the main webpage *(which will point to phpSysInfo if you have installed it)*
 
 ### 5.8 - Install PiZero-ZoneMinder-Cam <a name="installation-main"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pi_camera.png "PiZero-ZoneMinder-Cam")
