@@ -1,45 +1,85 @@
-# **PiZero-ZoneMinder-Cam** - Low cost ZoneMinder network camera using a Raspberry Pi Zero and a Pi camera
+# **PiZero-ZoneMinder-Cam**
+### A Low cost ZoneMinder network IP camera using a Raspberry Pi Zero and a Pi camera
+
+****
 
 ## Index
-* [What is the PiZero-ZoneMinder-Cam?](#id1)
-* [Q&A before you start](#id2)
-* [Cost breakdown](#id3)
-* [Installation](#id4)
-* [Donate](#id10)
+* [1 - What is the PiZero-ZoneMinder-Cam?](#whatis)
+* [2 - Q&A before you start](#qa)
+* [3 - Cost breakdown](#cost)
+* [4 - Requirements](#requirements)
+* [5 - Installation](#installation)
+* [6 - Donate](#donate)
 
-## What is the PiZero-ZoneMinder-Cam?
-It is a very low cost camera built from a Raspberry Pi Zero, a Raspberry Pi camera and a cheap USB-WiFi module.
+****
 
-This setup is meant to be connected to a ZoneMinder server you have on your network, where you can configure your cameras (recording, movement detection, etc) as you please.
-I abandoned some ready to use software/builds available online because of how heavy they are. I also avoided cheap IP cameras because I do not want my private home cameras connected to a cloud.
+## **1 - What is the PiZero-ZoneMinder-Cam?** {#whatis}
+It is a very **low cost** camera built from a Raspberry Pi Zero, a Raspberry Pi camera and a cheap USB-WiFi module.
 
-## Q&A before you start
-### Why I am not using MotionEye or MotionEyeOS?
-I have tried these tools, but I abandoned them because they:
-* Were quite heavy and extremelly slow on a Raspberry Pi Zero, as most part of the tasks were CPU intensive
-* Included features like motion detection, text overlay, video recording, which I was not planning to run on-camera
-* Provided dissapointing H264 results with lots of artifacts which are very unreliable for motion detection
-* Provided MJPEG option with very basic setup and didn't offer a lot of configuration options
+This setup is meant to be connected to a **ZoneMinder** server on your network, where you can add and configure your cameras (recording, movement detection, etc) as you please.
+The streaming format is set to **MJPEG** by default as it is a format that better fits the purpose of this project.
+I abandoned some ready to use software/builds available online because of how heavy they were. I also avoided cheap IP cameras because **I do not want any of my private home cameras connected to a cloud** somewhere on the world.
 
-### Why am I not using a cheap IP camera from eBay?
-This is quite simple to answer:
-* I really do not want to add cameras to my private home that may transmit a stream to a cloud somewhere out of my home.
-* I do not want the footage to leave my domain.
-* I really prefer to have full control over the equipment I own, which is not possible with a cheap IP plug-and-play camera.
+****
 
-### Why am I using a non-WiFi Raspberry Pi Zero (non-W model)?
-The Raspberry Pi Zero W (with embedded WiFi module) has quite a lot of bugs that havent been solved since few years, for example:
+## **2 - Q&A before you start** {#qa}
+### Why are you not using MotionEye or MotionEyeOS?
+I actually have tried these options, but I abandoned them because:
+* They were quite heavy and extremelly slow on a Raspberry Pi Zero, as most part of the tasks were CPU intensive.
+* They included features like motion detection, text overlay, video recording, which I was not planning to run on-camera and were quite heavy for my Raspberry Pi Zero
+* Provided dissapointing H264 encoding results (over WiFi) with lots of artifacts rendering the footage somehow unsusable for motion detection
+* Provided MJPEG encoding option with a very basic setup and didn't offer a lot of configuration options
+* The encoding was done via software, not taking advantage of the hardware for MJPEG and H.264
+
+### Why are you not using a cheap IP camera from eBay/Amazon/DealExtreme/Gearbest?
+Although you can get quite cheap IP cameras there, this is quite simple to answer:
+* I really do not want to add cameras to my private home that may stream to a cloud somewhere out of my home
+* I want to avoid situations where you order 10 similar cameras, and when they arrive half of them come with a completely different firmware
+* These cheap cameras have very little *(if any)* documentation available
+* I really prefer to have full control over the equipment I own, which is not possible with a cheap IP plug-and-play camera
+
+### Why are you using a non-WiFi Raspberry Pi Zero (non-W model)?
+Apart from choosing the cheapest option *(non WiFi model)*, the Raspberry Pi Zero W *(with embedded WiFi module)* has quite a lot of bugs that havent been solved since few years, here are the ones I dealt with when using the onboard WiFi:
 * [wlan freezes in raspberry pi 3/PiZeroW (Not 3B+)](https://github.com/raspberrypi/linux/issues/1342)
 * [Kernel oops or hard freeze when streaming video on Zero W (and Pi 3B+)](https://github.com/raspberrypi/linux/issues/2555)
 
-From my personal tests, the Raspberry Pi Zero W would always crash the network interface few minutes after streaming video over WiFi, which was only resolved via a full reboot. I decided that this solution was very unreliable for a device that is supposed to stay online 24/7 without human contact.
-I then decided to test one of those cheap USB-WiFi dongles, which worked perfectly without any drop *(tested with constant 5Mbps upload)*
+From my personal tests, the Raspberry Pi Zero W always crashes the network interface few minutes after streaming video over WiFi, which was only resolved via a full reboot, happening again few minutes later after the stream restarted.
+I decided that this solution *(with onboard WiFi)* was very unreliable for a device that is supposed to stay online 24/7/365 without human contact.
+I then tested one of those cheap USB-WiFi dongles available on eBay or related websites, which worked perfectly without any package drop *(tested with a constant 5Mbps MJPEG stream)*
 
-## Cost breakdown
+### Why are you streaming MJPEG instead of H.264?
+There are several advantages and disadvantages on both streams, this table compares the most important points:
+
+|  | MJPEG | H.264 | 
+| --- | --- | --- |
+| Compression type | Individual frames *(individual JPEGs)* | Across frames *(current frame depends on previous frames)* |
+| Network bandwidth used | High | Low |
+| Still frame quality | High | Low *(quality decreases the further you are from the key frame)* |
+| Adequate for ... frame rates | Low | High |
+| Storing space requirements | High | Low |
+| Recover from dropped frames | Instant recover *(frames are independent)* | Next frames impacted until key frame apears |
+| Support to export video stills | Native *(individual JPEGs)* | Needs key frame and motion vector frames |
+| Supported resolution on OV5647 | Up to native *(2592x1944)* | Limited to 1920x1080 *(not confimed)*|
+
+Here are some schematics trying to show the main differences between MJPEG and H.264.
+This one shows the quality and bandwith needed for each encoding method:
+
+![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/codecs1.png "MJPEG vs H.264")
+
+This one shows what happens in case of a dropped frame. On a MJPEG stream, the stream simply pauses and waits for the next frame, on an H.264 frame the lack of the key frame will corrupt the next frames untill a new key frame is sent:
+
+![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/codecs2.png "MJPEG vs H.264")
+
+For this project **I decided to go with MJPEG** because I am more interested in having **sharp image quality** per frame rather than bandwidth efficiency. Also in case some frames are dropped I prefer to have the instant recovery that MJPEG offers rather than the few seconds of corrupted images from the H.264 when operating at a low framerate. I will be using a low framerate (about 2-5 fps) and ZoneMinder will take care of encoding into H.264 in order to store the footage.
+For my setup the bandwidth is not really an issue as I will have separate networks for surveilance + IOT and for general use (laptop, TV, phones, etc) so MJPEG was the choice.
+
+****
+
+## **3 - Cost breakdown** {#cost}
 *NOTE: As I live in Poland, I bought some elements directly from Polish websites, so the prices will appear in PLN. Buying the Raspberry Pi Zero and the Micro SD card were cheaper to buy in Poland rather than eBay, so I didn't include eBay prices for them.*
 The prices are listed as of 19th April 2019
 
-### Price for each option
+### **Price for each option**
 Board+Card | Cost
 --- | ---
 Raspberry Pi Zero (PL) | **26.00 zł** (~$6.83)
@@ -59,7 +99,7 @@ OV5647 wide camera (PL) | **52.90 zł** (~$13.89) | **72.90 zł** (~$19.15) | -
 OV5647 regular camera (eBay) | $9.63 **(~36.67 zł)** | $14.88 **(~56.66 zł)** | $17.81 **(~67.81 zł)**
 OV5647 wide camera (eBay) | $12.74 **(~48.51 zł)** | $14.42 **(~54.90 zł)** | $19.99 **(~76.11 zł)**
 
-### Totals
+### **Totals**
 #### Polish stores only
 Option | Delivery | Cost (zł) | Cost ($)
 --- | --- | --- | ---
@@ -80,7 +120,7 @@ Wide night vision | Slow | 95.72 zł | $24.95
 Regular day+night vision | Slow | 108.63 zł | $28.34
 Wide day+night vision | Slow | 116.93 zł | $30.52
 
-### Where to buy?
+### **Where to buy?**
 Item | Store | Link
 --- | --- | ---
 Raspberry Pi Zero | Botland (PL) | [Link](https://botland.com.pl/en/modules-and-kits-raspberry-pi-zero/5215-raspberry-pi-zero-v13-512mb-ram.html)
@@ -88,11 +128,13 @@ Kingston 16GB C10 U1 | Allegro (PL) | [Link](https://allegro.pl/oferta/kingston-
 OV5647 cameras | Botland (PL) | [Link](https://botland.com.pl/en/945-cameras-for-raspberry-pi)
 OV5647 cameras | eBay | [Link](https://www.ebay.com/)
 
-## Requirements
-For this setup you will need:
+****
+
+## **4 - Requirements** {#requirements}
 
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/image_elements.PNG "What you will need")
 
+For this setup you will need:
 1. Raspberry Pi Zero *(or Zero W, but we won't be using the onboard WiFi)*
 2. Micro SD card *(4GB is enough)*
 2. USB WiFi stick/module *(see "Why am I using a non-WiFi Raspberry Pi Zero?"" above)*
@@ -102,17 +144,18 @@ For this setup you will need:
 7. USB hub *(to plug the keyboard and the WiFi stick/module)*
 4. Micro USB OTG adapter *(for the USB hub and later for the WiFi stick/module)*
 
+****
 
-## Installation
+## **5 - Installation** {#installation}
 Follow these instructions to install the system on your Raspberry Pi Zero:
-### Micro SD preparation
+### 5.1 - Micro SD preparation
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/sdcards.png "SD cards")
 
 Let's start by poreparing the micro SD card with the latest Raspbian Lite image:
 1. Download the latest **Raspbian Stretch Lite** *(no desktop)* from [the official site](https://www.raspberrypi.org/downloads/)
 2. Use a tool like **Win32 Disk Imager** ([download here](https://sourceforge.net/projects/win32diskimager/)) or similar to burn the image into your micro SD
 
-### First boot
+### 5.2 - First boot
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/raspiconfig.png "Raspberry pi configuration")
 
 Let's configure the basics with these steps:
@@ -131,7 +174,7 @@ Let's configure the basics with these steps:
 * `sudo rpi-update`
 6. Reboot your Raspberry Pi Zero to apply changes by typing `sudo reboot`
 
-### Assigning a static IP *(optional)*
+### 5.3 - Assigning a static IP *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/static_ip.png "Using static IP")
 
 If you want to assign a static IP instead of using your network DHCP server, follow the next steps *(tested on Rasbian Stretch Lite)*:
@@ -147,7 +190,7 @@ static domain_name_servers=192.168.0.1 8.8.8.8
 3. Save the file by pressing CTRL+O and then exit by pressing CTRL+X
 4. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 
-### Disable Raspberry Pi Zero W onboard WiFi
+### 5.4 - Disable Raspberry Pi Zero W onboard WiFi
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pizerow_nowifi.png "Disabling WiFi on Rpi Zero W")
 
 **For Raspberry Pi Zero W only:**
@@ -163,7 +206,7 @@ dtoverlay=pi3-disable-wifi
 4. Shutdown your Raspberry Pi Zero W by typing `sudo shutdown -h now`, plug in your USB WiFi dongle and power up your Pi Zero W again.
 5. After rebooting type `sudo ifconfig` and you should have one interface called `wlan0` with the IP you have assigned/been assigned *(which now is the USB WiFi module and not the onboard WiFi)*, you should also be automatically connected to your WiFi network as well.
 
-### Permanently disable SWAP to extend your SD card life *(optional)*
+### 5.5 - Permanently disable SWAP to extend your SD card life *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/noswap.png "Disabling SWAP")
 
 In order to extend your SD card life, you may disable the SWAP so it wont use your card as an extension of RAM, follow these steps to disable the SWAP:
@@ -174,7 +217,7 @@ In order to extend your SD card life, you may disable the SWAP so it wont use yo
 5. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 6. After the reboot, you can confirm if the SWAP was disabled by typing `free -h`. The SWAP should now have 0B/0B/0B
 
-### Install phpSysInfo *(optional)*
+### 5.6 - Install phpSysInfo *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/phpsysinfo.png "The phpSysInfo webpage")
 
 To install the phpSysInfo you will need to install Apache webserver and the PHP dependencies, follow these steps to install Apache, PHP and phpSysInfo:
@@ -207,7 +250,7 @@ Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did n
 12. You should be able to open a browser on your PC and navigate to the IP/hostname *(example: http://192.168.0.30/)* and you will see the phpSysInfo page with all details about your Raspberry Pi Zero
 13. You may now delete the folder `phpsysinfo-3.3.0` you downloaded with git with `rm -rf /home/pi/phpsysinfo*`
 
-### Install SSDP Responder *(optional)*
+### 5.7 - Install SSDP Responder *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/image_ssdp_camera.png "The device with SSDP responder service")
 
 If you want your Raspberry Pi Zero to show up as a camera device on your Windows Network, then follow these steps:
@@ -227,18 +270,19 @@ If you want your Raspberry Pi Zero to show up as a camera device on your Windows
 11. To configure the SSDP responder to autostart on every boot type:
 12. **TODO**
 
-### Install PiZero-ZoneMinder-Cam:
+### 5.8 - Install PiZero-ZoneMinder-Cam:
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pi_camera.png "PiZero-ZoneMinder-Cam")
 
 1. **TODO**
 
-### Make your SD card read only to extend its life and allow instant power off *(optional)*
+### 5.9 - Make your SD card Read-Only to extend its life and allow instant power off *(optional)*
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/oldsd.png "Extend SD life")
 
 If you want to extend your micro SD card life even further as well as allow instant power off without the possibility of corrupting your data, you should follow these steps:
 1. **TODO**
 
-## Donate
+****
+
+## **6 - Donate** {#donate}
 If you like this project, help me make it even better by donating!
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/vascojdb)
-
