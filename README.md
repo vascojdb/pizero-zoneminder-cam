@@ -17,8 +17,11 @@
   * [5.6 - Install phpSysInfo](#installation-physysinfo) *(optional)*
   * [5.7 - Install SSDP Responder](#installation-ssdpresponder) *(optional)*
   * [5.8 - Install PiZero-ZoneMinder-Cam](#installation-main)
-  * [5.9 - Make your SD card Read-Only to extend its life and allow instant power off](#installation-readonly) *(optional)*
-* [6 - Donate](#donate)
+  * [5.9 - Move folders from the SD card to RAM using TMPFS](#installation-tmpfs) *(optional)*
+* [6 - Configuration](#config)
+  * [6.1 - PiZero-ZoneMinder-Cam configuration](#config-cam)
+  * [6.2 - ZoneMinder configuration](#config-zm)
+* [7 - Donate](#donate)
 
 ****
 
@@ -259,7 +262,7 @@ Remember to run `sudo apt-get update` and `sudo apt-get upgrade -y` if you did n
 
 **phpSysInfo:**
 1. Make sure you have GIT installed by typing `sudo apt-get install git`
-2. Get the latest version from the official page [here](https://github.com/phpsysinfo/phpsysinfo/releases) or directly  [here (v3.3.0)](https://github.com/phpsysinfo/phpsysinfo/archive/v3.3.0.zip)
+2. Get the latest version from the official page [here](https://github.com/phpsysinfo/phpsysinfo/releases) or directly [here (v3.3.0)](https://github.com/phpsysinfo/phpsysinfo/archive/v3.3.0.zip)
 3. Type `git clone https://github.com/phpsysinfo/phpsysinfo/archive/v3.3.0.zip` on your home directory
 4. Move all the extracted contents to the webserver folder by typing `sudo cp -r phpsysinfo-3.3.0/* /var/www/html/`
 5. Prepare the configuration file by typing `sudo cp /var/www/html/phpsysinfo.ini.new /var/www/html/phpsysinfo.ini.new`
@@ -319,16 +322,108 @@ WantedBy=multi-user.target
 ### 5.8 - Install PiZero-ZoneMinder-Cam <a name="installation-main"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/pi_camera.png "PiZero-ZoneMinder-Cam")
 
-1. **TODO**
+1. Make sure you have GIT installed by typing `sudo apt-get install git`
+2. Get the latest PiZero-ZoneMinder-Cam version from the official page [here](https://github.com/vascojdb/pizero-zoneminder-cam)
+3. Type `git clone https://github.com/vascojdb/pizero-zoneminder-cam.git` on your home directory
+4. Change to the correct directory with `cd pizero-zoneminder-cam/files/camera-server/`
+5. Type `sudo chmod +x install.sh` and then `sudo ./install.sh` to install all the needed files
+7. You can edit your settings by typing `sudo nano /etc/pizero-zm-cam.conf` and then saving the file by pressing CTRL+O and then exit by pressing CTRL+X
+8. After every change on the configuration, restart the service by typing `sudo systemctl restart pizero-zm-cam`
 
-### 5.9 - Make your SD card Read-Only to extend its life and allow instant power off *(optional)* <a name="installation-readonly"></a>
+### 5.9 - Move folders from the SD card to RAM using TMPFS *(optional)* <a name="installation-tmpfs"></a>
 ![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/oldsd.png "Extend SD life")
 
-If you want to extend your micro SD card life even further as well as allow instant power off without the possibility of corrupting your data, you should follow these steps:
-1. **TODO**
+If you want to extend your micro SD card life even further you should move most part of the active folders (logs, tmp, etc) to the Raspberry Pi Zero RAM using **tmpfs**. To do this follow these steps:
+1. Edit the fstab file with `sudo nano /etc/fstab`
+2. Add the following entries to the end of the file:
+```
+tmpfs    /tmp    tmpfs    defaults,noatime,nosuid,size=100m    0 0
+tmpfs    /var/tmp    tmpfs    defaults,noatime,nosuid,size=30m    0 0
+tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0
+tmpfs    /var/spool/mqueue    tmpfs    defaults,noatime,nosuid,mode=0700,gid=12,size=30m    0 0
+```
+3. Save the file by pressing CTRL+O and then exit by pressing CTRL+X
+4. Reboot your Raspberry Pi Zero by typing `sudo reboot`
 
 ****
 
-## **6 - Donate** <a name="donate"></a>
+## **6 - Configuration** <a name="config"></a>
+Follow these steps to configure the PiZero-ZoneMinder-Cam service and ZoneMinder to receive the video stream:
+### 6.1 - PiZero-ZoneMinder-Cam configuration <a name="config-cam"></a>
+![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/sdcards.png "SD cards")
+
+You can edit your PiZero-ZoneMinder-Cam settings by typing on your Raspberry Pi Zero the command `sudo nano /etc/pizero-zm-cam.conf` and then saving the file by pressing CTRL+O and then exit by pressing CTRL+X
+Here is the default configuration found on *pizero-zm-cam.conf*:
+```bash
+# +------------------------------+
+# |  VIDEO SETTINGS (MANDATORY)  |
+# +------------------------------+
+# Set video width (pixels)
+WIDTH=1920
+# Set video height (pixels)
+HEIGHT=1440
+# Set video bitrate. Use bits per second (e.g. 10MBits/s would be -b 10000000)
+BITRATE=5000000
+# Specify the frames per second to record
+FRAMERATE=2
+# TCP port to connect
+TCP_PORT=5000
+# Video format to use (MJPEG or H264)
+FORMAT="MJPEG"
+# [Available only when format is H264] Set the intra frame refresh period (number of frames between H.264 key frames)
+#H264_INTRA=10
+# [Available only when format is H264] Set the quantisation parameter (10 to 40), higher values reduce quality and file size
+#H264_QUANT_PARAM=20
+# [Available only when format is H264] Set the H.264 profile to use (baseline, main, high)
+#H264_PROFILE="baseline"
+# [Available only when format is H264] Set the H.264 encoder level to use for encoding (4, 4.1 or 4.2)
+#H264_LEVEL="4"
+
+# +-----------------------------------+
+# |     IMAGE SETTINGS (OPTIONAL)     |
+# | Comment with '#' to disable usage |
+# +-----------------------------------+
+# Set image sharpness (-100 to 100)
+#SHARPNESS=0
+# Set image contrast (-100 to 100)
+#CONTRAST=0
+# Set image brightness (0 to 100)
+#BRIGHTNESS=50
+# Set image saturation (-100 to 100)
+#SATURATION=0
+# Set capture ISO (100 to 800)
+#ISO=100
+# Set EV compensation - steps of 1/6 stop (-10 to 10)
+#EV=0
+# Set exposure mode (off,auto,night,nightpreview,backlight,spotlight,sports,snow,beach,verylong,fixedfps,antishake,fireworks)
+EXPOSURE="fixedfps"
+# Set flicker avoid mode (off,auto,50hz,60hz)
+FLICKER_AVOID="50hz"
+# Set AWB mode (off,auto,sun,cloud,shade,tungsten,fluorescent,incandescent,flash,horizon)
+AWB="auto"
+# Set image effect (none,negative,solarise,sketch,denoise,emboss,oilpaint,hatch,gpen,pastel,watercolour,film,blur,saturation,colourswap,washedout,posterise,colourpoint,colourbalance,cartoon)
+#IMAGE_EFFECT="none"
+# Set metering mode (average,spot,backlit,matrix)
+#METERING="average"
+# Set image rotation (0, 90, 180, 270)
+#ROTATION=0
+# Set horizontal flip
+HORIZONTAL_FLIP=true
+# Set vertical flip
+VERTICAL_FLIP=true
+# Set Dynamic Range Compression (DRC) level (off,low,med,high)
+DRC="high"
+# Enable/Set annotate flags or text (see https://www.raspberrypi.org/documentation/raspbian/applications/camera.md)
+#ANNOTATE=12
+```
+
+### 6.2 - ZoneMinder configuration <a name="config-zm"></a>
+![alt text](https://raw.githubusercontent.com/vascojdb/pizero-zoneminder-cam/master/resources/raspiconfig.png "Raspberry pi configuration")
+
+**TODO**
+
+****
+
+## **7 - Donate** <a name="donate"></a>
 If you like this project, help me make it even better by donating!
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/vascojdb)
