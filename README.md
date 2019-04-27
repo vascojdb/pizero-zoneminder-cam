@@ -173,11 +173,14 @@ Let's configure the MotionEyeOS basics with these steps:
 13. Navigate to **Expert Settings** and turn **Fast Network Camera** to **ON**
 14. Press the **Apply** button and confirm the reboot, wait a few minutes and log in again.
 15. Navigate to **Video Device** and edit your settings according to your preferences. These are the settings I use on my cameras:
- * Video Resolution: 2592x1944
- * Frame Rate: 4
- * Image Quality: 10% (this gives about 13Mbps for the MJPEG stream)
- * Exposure Mode: Fixed FPS (so it avoids the frame drops and motion blur when it is getting dark)
- * Dynamic Range Compensation: High
+```
+Video Device tab
+   * Video Resolution: 2592x1944
+   * Frame Rate: 4
+   * Image Quality: 10% (this gives about 13Mbps for the MJPEG stream)
+   * Exposure Mode: Fixed FPS (so it avoids the frame drops and motion blur when it is getting dark)
+   * Dynamic Range Compensation: High
+```
 16. Navigate to **Video Streaming** section and set the port here if needed, I left the default one *(8081)*
 17. Click on **Streaming URL** and copy the contents as you will need them later for ZoneMinder.
 18. Press the **Apply** button *(you may need to reboot again)*
