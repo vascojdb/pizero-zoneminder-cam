@@ -1,3 +1,5 @@
+# THIS METHOD IS OLD AND DOES NOT USE MOTIONEYEOS! ALTHOUGH IT WORKS, USE AT YOUR OWN RISK
+
 # **PiZero-ZoneMinder-Cam**
 ### A Low cost ZoneMinder network IP camera using a Raspberry Pi Zero and a Pi camera
 

@@ -1,5 +1,5 @@
 # **PiZero-ZoneMinder-Cam**
-### A Low cost ZoneMinder network IP camera using a Raspberry Pi Zero and a Pi camera
+### A very low-cost ZoneMinder network IP camera using a Raspberry Pi Zero, MotionEyeOS and a Pi camera
 
 ****
 
