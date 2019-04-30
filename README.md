@@ -79,7 +79,7 @@ For my setup the bandwidth is not really an issue as I will have separate networ
 ****
 
 ## **3 - Cost breakdown** <a name="cost"></a>
-**NEEDS UPDATE!**
+
 *NOTE: As I live in Poland, I bought some elements directly from Polish websites (such as Allegro.pl and Botland.pl)*
 The prices are listed as of 30th April 2019
 
