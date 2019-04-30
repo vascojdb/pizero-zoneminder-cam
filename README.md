@@ -11,7 +11,8 @@
 * [5 - Installation](#installation)
 * [6 - MotionEyeOS configuration](#motioneyeos)
 * [7 - ZoneMinder configuration](#zm)
-* [8 - Donate](#donate)
+* [8 - Building the camera enclosure](#enclosure)
+* [9 - Donate](#donate)
 
 ****
 
@@ -95,7 +96,8 @@ MicroUSB-USB OTG adapter | $0.33 | -
 
 ### **Indoor camera**
 
-These are the costs of my indoor camera module, with day and night vision (with electronic IR cut filter)
+These are the costs of my indoor camera module, with day and night vision (with electronic IR cut filter).
+I am not including the cost of any dummy camera enclosure as I designed and 3D printed my own enclosure, which you can download from the 3D printing section.
 
 Part | Price/each
 --- | ---
@@ -196,6 +198,21 @@ Storage tab
 
 ****
 
-## **8 - Donate** <a name="donate"></a>
+## **8 - Building the camera enclosure** <a name="enclosure"></a>
+
+To build the camera enclosure you have 3 options:
+* Leave the camera hardware as it is *(on open-air)*
+* Buy a cheap dummy camera, remove the fake LEDs and the inside and add the Raspberry Pi Zero, camera and LEDs
+* Design and 3D print your own enclosure
+
+I did not want to have my hardware open-air, so I decided to buy a fake dome camera to use as enclosure. Unfortunatly the number of changes needed to accomodate the hardware was so big that I ended up designing and 3D printing some of the dummy camera parts.
+After designing and 3D printing few parts I eventually decided to re-design and 3D print the whole indoor camera model.
+
+You can download my designed 3D models (DWG and STL) from thingiverse from these links:
+* Indoor camera: *TODO*
+
+****
+
+## **9 - Donate** <a name="donate"></a>
 If you like this project, help me make it even better by donating!
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/vascojdb)
